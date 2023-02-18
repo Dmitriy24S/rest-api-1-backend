@@ -8,6 +8,8 @@ const port = config.get<number>('port')
 
 const app = express()
 
+app.use(express.json()) // apply middleware to every route. parse req.body/JSON data from HTTP request, otherwise i.e. create user error: expected object, but recieve undefined
+
 app.listen(port, async () => {
   logger.info(`App is running at localhost:${port}`)
   //   console.log('Server is running')
