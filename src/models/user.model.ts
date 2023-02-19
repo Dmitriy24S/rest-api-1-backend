@@ -39,7 +39,7 @@ userSchema.pre('save', async function (next: (err?: Error) => void) {
   let user = this as UserDocument
 
   // if save is not modifying password:
-  if (!user.isModified('passowrd')) {
+  if (!user.isModified('password')) {
     return next()
   }
 
@@ -50,14 +50,17 @@ userSchema.pre('save', async function (next: (err?: Error) => void) {
   return next()
 })
 
-userSchema.methods.comparePassowrd = async function (
+userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   const user = this as UserDocument
+
+  console.log('candidatePassword', candidatePassword, 'user.password:', user.password)
+
   return bcrypt.compare(candidatePassword, user.password).catch((error) => false) // true / throw -> false
 }
 
 // Model
-const UserModel = mongoose.model('User', userSchema)
+const UserModel = mongoose.model<UserDocument>('User', userSchema)
 
 export default UserModel
