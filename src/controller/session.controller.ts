@@ -1,6 +1,6 @@
 import config from 'config'
 import { Request, Response } from 'express'
-import { createSession, findSessions } from '../service/session.service'
+import { createSession, findSessions, updateSession } from '../service/session.service'
 import { validatePassword } from '../service/user.service'
 import { signJwt } from '../utils/jwt.utils'
 
@@ -51,4 +51,20 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
   console.log('sessions:', sessions)
 
   return res.send(sessions)
+}
+
+export async function deleteSessionHandler(req: Request, res: Response) {
+  const sessionId = res.locals.user.session // safe to access this if have requireUser middleware is infront of this handler
+
+  await updateSession(
+    {
+      _id: sessionId,
+    },
+    { valid: false }
+  )
+
+  return res.send({
+    accessToken: null,
+    refreshToken: null,
+  })
 }

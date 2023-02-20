@@ -8,7 +8,7 @@ const deserializeUser = (req: Request, res: Response, next: NextFunction) => {
   // (Gets the property value at path of object. If the resolved value is undefined the defaultValue is used in its place.)
 
   const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '') // get otherwise '', remove word bearer at start of authorization token
-  console.log('accessToken', accessToken)
+  console.log('deserializeUser - accessToken:', accessToken)
 
   if (!accessToken) {
     return next()
@@ -16,7 +16,7 @@ const deserializeUser = (req: Request, res: Response, next: NextFunction) => {
 
   // verify accessToken
   const { decoded, expired } = verifyJwt(accessToken)
-  console.log('decoded', decoded)
+  console.log('deserializeUser - decoded:', decoded)
   // have decoded if valid jwt
   if (decoded) {
     res.locals.user = decoded // attach user to res.locals.user
