@@ -8,6 +8,7 @@ export default {
   dbUri: process.env.dbUri,
   saltWorkFactor: 10,
   accessTokenTtl: '15m',
+  // accessTokenTtl: '-1',
   refreshTokenTtl: '1y',
   publicKey: `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArT3nrBRimyGj+9R2NBc2
