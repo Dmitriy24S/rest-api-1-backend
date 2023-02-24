@@ -3,10 +3,17 @@ import config from 'config'
 import mongoose from 'mongoose'
 
 // Integrate mongoose with typescript (possible multiple methods to do this)
-export interface UserDocument extends mongoose.Document {
+export interface UserInput {
   email: string
   name: string
   password: string
+}
+// (instead of using Omit type in user service)
+
+export interface UserDocument extends UserInput, mongoose.Document {
+  // email: string
+  // name: string
+  // password: string
   createdAt: Date
   updatedAt: Date
   comparePassword(candidatePassword: string): Promise<boolean>

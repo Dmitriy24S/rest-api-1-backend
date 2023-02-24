@@ -9,12 +9,21 @@ const nanoid = customAlphabet('abcdefgjklmnopqestywzyx0123456789', 10) // Genera
 // ! Instead change the require of index.js in /.../rest-api/src/models/product.model.ts to a dynamic import() which is available in all CommonJS modules.
 
 // Integrate mongoose with typescript (possible multiple methods to do this)
-export interface ProductDocument extends mongoose.Document {
+
+export interface ProductInput {
   user: UserDocument['_id'] // user that created the product
   title: string
   description: string
   price: number
   image: string
+}
+
+export interface ProductDocument extends ProductInput, mongoose.Document {
+  //   user: UserDocument['_id'] // user that created the product
+  //   title: string
+  //   description: string
+  //   price: number
+  //   image: string
   createdAt: Date
   updatedAt: Date
 }
