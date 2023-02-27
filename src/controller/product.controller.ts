@@ -28,7 +28,7 @@ export async function updateProductHandler(
   const update = req.body
   const product = await findProduct({ productId })
   // ! Expected 2 arguments, but got 1.ts(2554)
-  // ! product.service.ts(12, 3): An argument for 'options' was not provided.
+  // ! product.service.ts(12, 3): An argument for 'options' was not provided. -> service edit? -> options?:
 
   if (!product) {
     return res.sendStatus(404) // Not Found
@@ -52,6 +52,7 @@ export async function getProductHandler(
 ) {
   const productId = req.params.productId
   const product = await findProduct({ productId })
+  // ! tests ->   An argument for 'options' was not provided. Expected 2 arguments, but got 1. -> service edit? -> options?:
 
   if (!product) {
     return res.sendStatus(404) // Not Found
@@ -69,7 +70,7 @@ export async function deleteProductHandler(
 
   const product = await findProduct({ productId })
   // ! Expected 2 arguments, but got 1.ts(2554)
-  // ! product.service.ts(12, 3): An argument for 'options' was not provided.
+  // ! product.service.ts(12, 3): An argument for 'options' was not provided. => service edit? -> options?:
 
   if (!product) {
     return res.sendStatus(404) // Not Found

@@ -26,6 +26,7 @@ export interface ProductDocument extends ProductInput, mongoose.Document {
   //   image: string
   createdAt: Date
   updatedAt: Date
+  productId: string
 }
 
 // Schema

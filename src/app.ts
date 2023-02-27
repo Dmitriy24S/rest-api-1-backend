@@ -1,22 +1,17 @@
 import config from 'config'
-import express from 'express'
-import deserializeUser from './middleware/deserializeUser'
 import routes from './routes'
 import connect from './utils/connect'
 import logger from './utils/logger'
+import createServer from './utils/server'
 
 const port = config.get<number>('port')
 
-const app = express()
-
-app.use(express.json()) // apply middleware to every route. parse req.body/JSON data from HTTP request, otherwise i.e. create user error: expected object, but recieve undefined
-
-app.use(deserializeUser) // attach user to res.locals.user
+const app = createServer()
 
 app.listen(port, async () => {
+  // console.log('Server is running')
   logger.info(`App is running at localhost:${port}`)
-  //   console.log('Server is running')
   await connect()
   //
-  routes(app)
+  // routes(app) // ! moved to server.ts
 })

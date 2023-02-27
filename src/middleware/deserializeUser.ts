@@ -11,7 +11,7 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
   const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '') // get otherwise '', remove word bearer at start of authorization token
   console.log('deserializeUser - accessToken:', accessToken)
 
-  const refreshToken = get(req, 'headers.x-refresh')
+  const refreshToken = get(req, 'headers.x-refresh') as string // ! const refreshToken: string
   console.log('deserializeUser - refreshToken:', refreshToken)
 
   if (!accessToken) {
@@ -31,13 +31,14 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
   // If token expired & have refresh token - give user new refreshed token = new access token
   if (expired && refreshToken) {
     // const newAccesssToken = await reIssueAccessToken(refreshToken)
-    const newAccesssToken = await reIssueAccessToken({ refreshToken }) // check that refresh token is valid & issue new access token
+    const newAccesssToken = await reIssueAccessToken({ refreshToken }) // check that refresh token is valid & issue new access token // ! Argument of type 'string | false' is not assignable to parameter of type 'string'.
 
     if (newAccesssToken) {
       res.setHeader('x-access-token', newAccesssToken)
     }
 
-    const result = verifyJwt(newAccesssToken) // decode access token
+    // const result = verifyJwt(newAccesssToken) // decode access token // ! Argument of type 'string | false' is not assignable to parameter of type 'string'.
+    const result = verifyJwt(newAccesssToken as string) // decode access token // ! const newAccesssToken: string | fals
 
     res.locals.user = result.decoded // attach user to res.locals.user
     return next()
