@@ -25,8 +25,10 @@ export const userPayload = {
   name: 'Jane Doe',
 }
 
+// describe.skip('product', () => {
+
 describe('product', () => {
-  // ! rare not common use?
+  // ! rare not common use?:
   beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create() // start instance of mongodb in memory, gives connection uri
     await mongoose.connect(mongoServer.getUri())
