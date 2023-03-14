@@ -22,3 +22,7 @@ export async function createUserHandler(
     return res.status(409).send(error.message) // conflict, i.e. email user already registered
   }
 }
+
+export async function getCurrentUser(req: Request, res: Response) {
+  return res.send(res.locals.user)
+}

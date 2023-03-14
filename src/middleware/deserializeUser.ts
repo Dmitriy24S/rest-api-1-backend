@@ -31,14 +31,24 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
   // If token expired & have refresh token - give user new refreshed token = new access token
   if (expired && refreshToken) {
     // const newAccesssToken = await reIssueAccessToken(refreshToken)
-    const newAccesssToken = await reIssueAccessToken({ refreshToken }) // check that refresh token is valid & issue new access token // ! Argument of type 'string | false' is not assignable to parameter of type 'string'.
+    const newAccessToken = await reIssueAccessToken({ refreshToken }) // check that refresh token is valid & issue new access token // ! Argument of type 'string | false' is not assignable to parameter of type 'string'.
 
-    if (newAccesssToken) {
-      res.setHeader('x-access-token', newAccesssToken)
+    if (newAccessToken) {
+      res.setHeader('x-access-token', newAccessToken)
+
+      // !
+      res.cookie('accessToken', newAccessToken, {
+        maxAge: 900000, // 15 mins
+        httpOnly: true,
+        domain: 'localhost',
+        path: '/',
+        sameSite: 'strict',
+        secure: false,
+      })
     }
 
     // const result = verifyJwt(newAccesssToken) // decode access token // ! Argument of type 'string | false' is not assignable to parameter of type 'string'.
-    const result = verifyJwt(newAccesssToken as string) // decode access token // ! const newAccesssToken: string | fals
+    const result = verifyJwt(newAccessToken as string) // decode access token // ! const newAccesssToken: string | fals
 
     res.locals.user = result.decoded // attach user to res.locals.user
     return next()
