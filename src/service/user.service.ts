@@ -1,6 +1,10 @@
+import axios from 'axios'
+import config from 'config'
 import { omit } from 'lodash'
-import { DocumentDefinition, FilterQuery } from 'mongoose'
+import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
+import qs from 'querystring'
 import UserModel, { UserDocument, UserInput } from '../models/user.model'
+import log from '../utils/logger'
 
 export async function createUser(
   // input: DocumentDefinition<
@@ -48,4 +52,81 @@ export async function validatePassword({
 
 export async function findUser(query: FilterQuery<UserDocument>) {
   return UserModel.findOne(query).lean()
+}
+
+interface GoogleTokensResult {
+  access_token: string
+  expires_in: Number
+  refresh_token: string
+  scope: string
+  id_token: string
+}
+
+export async function getGoogleOAuthTokens({
+  code,
+}: {
+  code: string
+}): Promise<GoogleTokensResult> {
+  const url = 'https://oauth2.googleapis.com/token'
+
+  const values = {
+    code,
+    client_id: config.get('googleOAuthClientId') as string,
+    client_secret: config.get('googleOAuthClientSecret') as string,
+    redirect_uri: config.get('googleOAuthRedirectUrl') as string, // ! uri / url
+    grant_type: 'authorization_code',
+  }
+
+  try {
+    const res = await axios.post<GoogleTokensResult>(url, qs.stringify(values), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded', // tell google api how data is packaged up -> done bu url encoding
+      },
+    })
+    return res.data
+  } catch (error) {
+    console.log('getGoogleOAuthTokens error:', error)
+    log.error(error, 'failed to fetch Google OAuth Tokens')
+    throw new Error(error.message) // ! 'error' is of type 'unknown'.ts(18046)
+  }
+}
+
+interface GoogleUserResult {
+  id: string
+  email: string
+  verified_email: boolean
+  name: string
+  given_name: string
+  family_name: string
+  picture: string
+  locale: string
+}
+
+export async function getGoogleUser({
+  id_token,
+  access_token,
+}: Pick<GoogleTokensResult, 'id_token' | 'access_token'>): Promise<GoogleUserResult> {
+  try {
+    const res = await axios.get<GoogleUserResult>(
+      // `https://www.googleapi.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
+      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
+      {
+        headers: {
+          Authorization: `Bearer ${id_token}`, // identify who we are, given these tokens -> have access to data
+        },
+      }
+    )
+    return res.data
+  } catch (error) {
+    console.log('getGoogleUser error:', error)
+    throw new Error(error.message)
+  }
+}
+
+export async function findAndUpdateUser(
+  query: FilterQuery<UserDocument>,
+  update: UpdateQuery<UserDocument>,
+  options: QueryOptions = {}
+) {
+  return UserModel.findOneAndUpdate(query, update, options)
 }

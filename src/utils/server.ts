@@ -11,7 +11,7 @@ function createServer() {
   app.use(
     cors({
       origin: config.get('origin'), // !
-      credentials: true, // ! http vs https production
+      credentials: true,
     })
   )
 

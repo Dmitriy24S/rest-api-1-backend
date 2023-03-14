@@ -14,6 +14,7 @@ export interface UserDocument extends UserInput, mongoose.Document {
   // email: string
   // name: string
   // password: string
+  picture: string
   createdAt: Date
   updatedAt: Date
   comparePassword(candidatePassword: string): Promise<boolean>
@@ -34,6 +35,9 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    picture: {
+      type: String,
     },
   },
   {
